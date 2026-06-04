@@ -7,6 +7,8 @@ void pcb_ai_ui_create(void);
 void pcb_ai_ui_set_status(const char *text);
 void pcb_ai_ui_set_run_callback(void (*cb)(void));
 void pcb_ai_ui_set_next_callback(void (*cb)(void));
+void pcb_ai_ui_show_input_patch(const float *input);
+void pcb_ai_ui_show_heatmap(const float *input, const float *output);
 void pcb_ai_ui_update_result(
     float score,
     float threshold_low,

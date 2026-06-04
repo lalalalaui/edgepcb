@@ -103,6 +103,7 @@ static void run_current_sample(void)
   const uint32_t sample_index = current_sample_index;
   const uint8_t expected_label = g_test_label[sample_index];
   const char *result = NULL;
+  const float *output = NULL;
   int result_code = 0;
 
   if (!g_ai_ready) {
@@ -121,6 +122,7 @@ static void run_current_sample(void)
 
   result = app_score_result(score);
   result_code = app_score_result_code(score);
+  output = app_ai_get_output();
 
 #if defined(TEST_VECTOR_HAS_EXPECTED_SCORE)
   const double pc_ref = (double)g_test_expected_score[sample_index];
@@ -167,6 +169,8 @@ static void run_current_sample(void)
                           expected_label,
                           compare);
 #endif
+  pcb_ai_ui_show_input_patch(g_test_inputs[sample_index]);
+  pcb_ai_ui_show_heatmap(g_test_inputs[sample_index], output);
   pcb_ai_ui_set_status("Last run ok");
 }
 
@@ -220,12 +224,27 @@ int main(void)
   sdram_init();
   printf("SDRAM init ok\r\n");
 
+  lcd_init();
+  printf("LCD init ok\r\n");
+
+  tp_dev.init();
+  printf("Touch init ok\r\n");
+
+  lvgl_port_init();
+  pcb_ai_ui_create();
+  pcb_ai_ui_set_run_callback(run_current_sample);
+  pcb_ai_ui_set_next_callback(next_sample);
+  pcb_ai_ui_set_status("AI init");
+
   if (app_ai_init() == 0) {
     g_ai_ready = 1;
     printf("AI init ok\r\n");
+    pcb_ai_ui_set_status("AI init ok");
+    run_current_sample();
   } else {
     g_ai_ready = 0;
     printf("AI init failed: %s\r\n", app_ai_last_error());
+    pcb_ai_ui_set_status("AI init failed");
   }
 
   /* USER CODE END 2 */
@@ -237,14 +256,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if (g_ai_ready && ((HAL_GetTick() - g_ai_last_run_tick) >= 2000U)) {
-      g_ai_last_run_tick = HAL_GetTick();
-      app_run_test_sample(g_ai_sample_index);
-      g_ai_sample_index++;
-      if (g_ai_sample_index >= TEST_VECTOR_COUNT) {
-        g_ai_sample_index = 0;
-      }
-    }
+    lv_timer_handler();
+    HAL_Delay(5);
   }
   /* USER CODE END 3 */
 }

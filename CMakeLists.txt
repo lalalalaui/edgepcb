@@ -100,6 +100,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/BSP/LCD/ltdc.c
     Drivers/BSP/LED/led.c
     Drivers/BSP/LVGL/lvgl_port.c
+    Drivers/BSP/LVGL/pcb_ai_ui.c
     Drivers/BSP/LVGL/slave_ui.c
     Drivers/BSP/MPU/mpu.c
     Drivers/BSP/SDRAM/sdram.c
