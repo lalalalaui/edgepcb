@@ -59,7 +59,11 @@ extern UART_HandleTypeDef g_uart1_handle;       /* UART句柄 */
 extern uint8_t  g_usart_rx_buf[USART_REC_LEN];  /* 接收缓冲,最大USART_REC_LEN个字节.末字节为换行符 */
 extern uint16_t g_usart_rx_sta;                 /* 接收状态标记 */
 extern uint8_t g_rx_buffer[RXBUFFERSIZE];       /* HAL库USART接收Buffer */
-
+extern volatile uint32_t g_usart_init_status;
+extern volatile uint32_t g_usart_rx_start_status;
+extern volatile uint32_t g_usart_last_tx_status;
+extern volatile uint32_t g_usart_tx_timeout_count;
+extern volatile uint32_t g_usart_isr_snapshot;
 /*******************************************************************************************************/
 
 void usart_init(uint32_t baudrate);             /* 串口初始化函数 */

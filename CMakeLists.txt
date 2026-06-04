@@ -100,6 +100,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/BSP/LCD/ltdc.c
     Drivers/BSP/LED/led.c
     Drivers/BSP/LVGL/lvgl_port.c
+    Drivers/BSP/LVGL/slave_ui.c
     Drivers/BSP/MPU/mpu.c
     Drivers/BSP/SDRAM/sdram.c
     Drivers/BSP/TOUCH/ctiic.c
@@ -114,6 +115,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c
     Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c
     Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_fmc.c
+)
+
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -u _printf_float
 )
 
 # Add include paths

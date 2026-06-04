@@ -28,6 +28,61 @@
 #include "./SYSTEM/sys/sys.h"
 #include "./SYSTEM/usart/usart.h"
 
+volatile uint32_t g_usart_init_status = 0xFFFFFFFFU;
+volatile uint32_t g_usart_rx_start_status = 0xFFFFFFFFU;
+volatile uint32_t g_usart_last_tx_status = 0;
+volatile uint32_t g_usart_tx_timeout_count = 0;
+volatile uint32_t g_usart_isr_snapshot = 0;
+
+
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
+int _write(int file, char *ptr, int len)
+{
+    (void)file;
+
+    if (g_uart1_handle.Instance == USART_UX && (USART_UX->CR1 & USART_CR1_UE) != 0U && len > 0)
+    {
+        HAL_StatusTypeDef ret = HAL_UART_Transmit(&g_uart1_handle, (uint8_t *)ptr, (uint16_t)len, 1000U);
+        g_usart_last_tx_status = (uint32_t)ret;
+        g_usart_isr_snapshot = USART_UX->ISR;
+        if (ret != HAL_OK)
+        {
+            g_usart_tx_timeout_count++;
+        }
+    }
+    else
+    {
+        g_usart_last_tx_status = 0xE002U;
+        g_usart_tx_timeout_count++;
+    }
+
+    return len;
+}
+#endif
+static int usart_write_char(int ch)
+{
+    uint8_t data = (uint8_t)ch;
+    HAL_StatusTypeDef ret;
+
+    g_usart_isr_snapshot = USART_UX->ISR;
+
+    if (g_uart1_handle.Instance != USART_UX || (USART_UX->CR1 & USART_CR1_UE) == 0U)
+    {
+        g_usart_last_tx_status = 0xE001U;
+        g_usart_tx_timeout_count++;
+        return ch;
+    }
+
+    ret = HAL_UART_Transmit(&g_uart1_handle, &data, 1U, 5U);
+    g_usart_last_tx_status = (uint32_t)ret;
+    if (ret != HAL_OK)
+    {
+        g_usart_tx_timeout_count++;
+    }
+
+    return ch;
+}
+
 
 /* 如果使用os,则包括下面的头文件即可. */
 #if SYS_SUPPORT_OS
@@ -41,10 +96,7 @@
 int fputc(int ch, FILE *f)
 {
     (void)f;
-    while ((USART_UX->ISR & 0X40) == 0);
-
-    USART_UX->TDR = (uint8_t)ch;
-    return ch;
+    return usart_write_char(ch);
 }
 #else
 #if (__ARMCC_VERSION >= 6010050)
@@ -82,10 +134,7 @@ FILE __stdout;
 int fputc(int ch, FILE *f)
 {
     (void)f;
-    while ((USART_UX->ISR & 0X40) == 0);
-
-    USART_UX->TDR = (uint8_t)ch;
-    return ch;
+    return usart_write_char(ch);
 }
 #endif
 /******************************************************************************************/
@@ -123,10 +172,18 @@ void usart_init(uint32_t baudrate)
     g_uart1_handle.Init.Parity = UART_PARITY_NONE;         /* 无奇偶校验位 */
     g_uart1_handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;   /* 无硬件流控 */
     g_uart1_handle.Init.Mode = UART_MODE_TX_RX;            /* 收发模式 */
-    HAL_UART_Init(&g_uart1_handle);                        /* HAL_UART_Init()会使能UART1 */
+    g_uart1_handle.Init.OverSampling = UART_OVERSAMPLING_16;
+    g_uart1_handle.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+    g_uart1_handle.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+    g_uart1_handle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+
+    g_usart_init_status = (uint32_t)HAL_UART_Init(&g_uart1_handle);  /* HAL_UART_Init()会使能UART1 */
     
     /* 该函数会开启接收中断：标志位UART_IT_RXNE，并且设置接收缓冲以及接收缓冲接收最大数据量 */
-    HAL_UART_Receive_IT(&g_uart1_handle, (uint8_t *)g_rx_buffer, RXBUFFERSIZE);
+    if (g_usart_init_status == (uint32_t)HAL_OK)
+    {
+        g_usart_rx_start_status = 0xEEEE0000U;                  /* TX-only test: RX interrupt disabled */
+    }
 }
 
 /**
@@ -156,7 +213,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         gpio_init_struct.Alternate = USART_RX_GPIO_AF;              /* 复用为USART1 */
         HAL_GPIO_Init(USART_RX_GPIO_PORT, &gpio_init_struct);       /* 初始化接收引脚 */
 
-#if USART_EN_RX
+#if USART_EN_RX && 0
         HAL_NVIC_EnableIRQ(USART_UX_IRQn);                          /* 使能USART1中断通道 */
         HAL_NVIC_SetPriority(USART_UX_IRQn, 3, 3);                  /* 抢占优先级3，子优先级3 */
 #endif
@@ -202,7 +259,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
                 }
             }
         }
-        HAL_UART_Receive_IT(&g_uart1_handle, (uint8_t *)g_rx_buffer, RXBUFFERSIZE);
+        if (g_usart_init_status == (uint32_t)HAL_OK)
+    {
+        g_usart_rx_start_status = 0xEEEE0000U;                  /* TX-only test: RX interrupt disabled */
+    }
     }
 }
 

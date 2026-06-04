@@ -1,0 +1,283 @@
+ST Edge AI Core v2.2.0-20266 2adc00962
+Created date          : 2026-06-04 16:36:54
+Parameters            : generate --target stm32h7 --name network -m E:/AI_Projects/PCB_Anomaly_EdgeAI/deployment/onnx/anomaly_tiny_ae_96.onnx --compression none --verbosity 1 --workspace C:/Users/HUJUXI~1/AppData/Local/Temp/mxAI_workspace5147135787530014987997061123715910 --output C:/Users/HU JUXIAN/.stm32cubemx/network_output
+
+Exec/report summary (generate)
+---------------------------------------------------------------------------------------------------------------
+model file         :   E:\AI_Projects\PCB_Anomaly_EdgeAI\deployment\onnx\anomaly_tiny_ae_96.onnx               
+type               :   onnx                                                                                    
+c_name             :   network                                                                                 
+compression        :   none                                                                                    
+options            :   allocate-inputs, allocate-outputs                                                       
+optimization       :   balanced                                                                                
+target/series      :   stm32h7                                                                                 
+workspace dir      :   C:\Users\HUJUXI~1\AppData\Local\Temp\mxAI_workspace5147135787530014987997061123715910   
+output dir         :   C:\Users\HU JUXIAN\.stm32cubemx\network_output                                          
+model_fmt          :   float                                                                                   
+model_name         :   anomaly_tiny_ae_96                                                                      
+model_hash         :   0x97ee2a65448f2b9045958ff8949da962                                                      
+params #           :   37,023 items (144.62 KiB)                                                               
+---------------------------------------------------------------------------------------------------------------
+input 1/1          :   'input', f32(1x3x96x96), 108.00 KBytes, activations                                     
+output 1/1         :   'output_Transpose_0', f32(1x3x96x96), 108.00 KBytes, activations                        
+macc               :   30,668,667                                                                              
+weights (ro)       :   148,092 B (144.62 KiB) (1 segment)                                                      
+activations (rw)   :   543,792 B (531.05 KiB) (1 segment) *                                                    
+ram (total)        :   543,792 B (531.05 KiB) = 543,792 + 0 + 0                                                
+---------------------------------------------------------------------------------------------------------------
+(*) 'input'/'output' buffers are allocated in the activations buffer
+
+Model name - anomaly_tiny_ae_96
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+m_id   layer (type,original)                                           oshape                 param/size             macc                     connected to   | c_size   c_macc                 c_type                           
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+0      input (Input, )                                                 [b:1,h:96,w:96,c:3]                                                                   |                                 
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+1      _encoder_encoder_0..v_output_0 (Conv2D, Conv)                   [b:1,h:48,w:48,c:12]   336/1,344           746,508                            input   |          +13,824(+1.9%)         Conv2D_/Transpose_[o][1, 16]     
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+2      _encoder_encoder_1..u_output_0 (Nonlinearity, Relu)             [b:1,h:48,w:48,c:12]                        27,648   _encoder_encoder_0..v_output_0   |          +13,824(+50.0%)        Transpose_/Nonlinearity_[0, 2]   
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+3      _encoder_encoder_2..v_output_0 (Conv2D, Conv)                   [b:1,h:24,w:24,c:24]   2,616/10,464      1,493,016   _encoder_encoder_1..u_output_0   |                                 Conv2D_[3]                       
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+4      _encoder_encoder_3..u_output_0 (Nonlinearity, Relu)             [b:1,h:24,w:24,c:24]                        13,824   _encoder_encoder_2..v_output_0   |                                 Nonlinearity_[4]                 
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+5      _encoder_encoder_4..v_output_0 (Conv2D, Conv)                   [b:1,h:12,w:12,c:48]   10,416/41,664     1,493,040   _encoder_encoder_3..u_output_0   |                                 Conv2D_[5]                       
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+6      _encoder_encoder_5..u_output_0 (Nonlinearity, Relu)             [b:1,h:12,w:12,c:48]                         6,912   _encoder_encoder_4..v_output_0   |                                 Nonlinearity_[6]                 
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+7      _decoder_decoder_0..e_output_0 (ConvTranspose, ConvTranspose)   [b:1,h:24,w:24,c:24]   18,456/73,824                 _encoder_encoder_5..u_output_0   |          +10,616,856(+100.0%)   Resize_/Conv2D_[7, 8]            
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+8      _decoder_decoder_1..u_output_0 (Nonlinearity, Relu)             [b:1,h:24,w:24,c:24]                        13,824   _decoder_decoder_0..e_output_0   |                                 Nonlinearity_[9]                 
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+9      _decoder_decoder_2..e_output_0 (ConvTranspose, ConvTranspose)   [b:1,h:48,w:48,c:12]   4,620/18,480                  _decoder_decoder_1..u_output_0   |          +10,616,844(+100.0%)   Resize_/Conv2D_[10, 11]          
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+10     _decoder_decoder_3..u_output_0 (Nonlinearity, Relu)             [b:1,h:48,w:48,c:12]                        27,648   _decoder_decoder_2..e_output_0   |                                 Nonlinearity_[12]                
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+11     _decoder_decoder_4..e_output_0 (ConvTranspose, ConvTranspose)   [b:1,h:96,w:96,c:3]    579/2,316                     _decoder_decoder_3..u_output_0   |          +5,308,419(+100.0%)    Resize_/Conv2D_[13, 14]          
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+12     output (Nonlinearity, Sigmoid)                                  [b:1,h:96,w:96,c:3]                        276,480   _decoder_decoder_4..e_output_0   |                                 Nonlinearity_[15]                
+------ --------------------------------------------------------------- ---------------------- --------------- ----------- -------------------------------- --- -------- ---------------------- -------------------------------- 
+model/c-model: macc=4,098,900/30,668,667 +26,569,767(+648.2%) weights=148,092/148,092  activations=--/543,792 io=--/0
+
+
+
+Generated C-graph summary
+------------------------------------------------------------------------------------------------------------------------
+model name            : anomaly_tiny_ae_96
+c-name                : network
+c-node #              : 17
+c-array #             : 36
+activations size      : 543792 (1 segment)
+weights size          : 148092 (1 segment)
+macc                  : 30668667
+inputs                : ['input_output']
+outputs               : ['output_Transpose_0_output']
+
+C-Arrays (36)
+------ ----------------------------------------------------------- --------------- ------------------------- ------------- --------- 
+c_id   name (*_array)                                              item/size       domain/mem-pool           c-type        comment   
+------ ----------------------------------------------------------- --------------- ------------------------- ------------- --------- 
+0      _decoder_decoder_0_ConvTranspose_output_0_bias              24/96           weights/weights           const float             
+1      _decoder_decoder_0_ConvTranspose_output_0_output            13824/55296     activations/**default**   float                   
+2      _decoder_decoder_0_ConvTranspose_output_0_scratch0          768/3072        activations/**default**   float                   
+3      _decoder_decoder_0_ConvTranspose_output_0_upsample_output   25392/101568    activations/**default**   float                   
+4      _decoder_decoder_0_ConvTranspose_output_0_weights           18432/73728     weights/weights           const float             
+5      _decoder_decoder_1_Relu_output_0_output                     13824/55296     activations/**default**   float                   
+6      _decoder_decoder_2_ConvTranspose_output_0_bias              12/48           weights/weights           const float             
+7      _decoder_decoder_2_ConvTranspose_output_0_output            27648/110592    activations/**default**   float                   
+8      _decoder_decoder_2_ConvTranspose_output_0_scratch0          384/1536        activations/**default**   float                   
+9      _decoder_decoder_2_ConvTranspose_output_0_upsample_output   53016/212064    activations/**default**   float                   
+10     _decoder_decoder_2_ConvTranspose_output_0_weights           4608/18432      weights/weights           const float             
+11     _decoder_decoder_3_Relu_output_0_output                     27648/110592    activations/**default**   float                   
+12     _decoder_decoder_4_ConvTranspose_output_0_bias              3/12            weights/weights           const float             
+13     _decoder_decoder_4_ConvTranspose_output_0_output            27648/110592    activations/**default**   float                   
+14     _decoder_decoder_4_ConvTranspose_output_0_scratch0          192/768         activations/**default**   float                   
+15     _decoder_decoder_4_ConvTranspose_output_0_upsample_output   108300/433200   activations/**default**   float                   
+16     _decoder_decoder_4_ConvTranspose_output_0_weights           576/2304        weights/weights           const float             
+17     _encoder_encoder_0_Conv_output_0_bias                       12/48           weights/weights           const float             
+18     _encoder_encoder_0_Conv_output_0_output                     27648/110592    activations/**default**   float                   
+19     _encoder_encoder_0_Conv_output_0_scratch0                   27/108          activations/**default**   float                   
+20     _encoder_encoder_0_Conv_output_0_weights                    324/1296        weights/weights           const float             
+21     _encoder_encoder_1_Relu_output_0_output                     27648/110592    activations/**default**   float                   
+22     _encoder_encoder_2_Conv_output_0_bias                       24/96           weights/weights           const float             
+23     _encoder_encoder_2_Conv_output_0_output                     13824/55296     activations/**default**   float                   
+24     _encoder_encoder_2_Conv_output_0_scratch0                   108/432         activations/**default**   float                   
+25     _encoder_encoder_2_Conv_output_0_weights                    2592/10368      weights/weights           const float             
+26     _encoder_encoder_3_Relu_output_0_output                     13824/55296     activations/**default**   float                   
+27     _encoder_encoder_4_Conv_output_0_bias                       48/192          weights/weights           const float             
+28     _encoder_encoder_4_Conv_output_0_output                     6912/27648      activations/**default**   float                   
+29     _encoder_encoder_4_Conv_output_0_scratch0                   216/864         activations/**default**   float                   
+30     _encoder_encoder_4_Conv_output_0_weights                    10368/41472     weights/weights           const float             
+31     _encoder_encoder_5_Relu_output_0_output                     6912/27648      activations/**default**   float                   
+32     input_Transpose_output                                      27648/110592    activations/**default**   float                   
+33     input_output                                                27648/110592    activations/**default**   float         /input    
+34     output_Transpose_0_output                                   27648/110592    activations/**default**   float         /output   
+35     output_output                                               27648/110592    activations/**default**   float                   
+------ ----------------------------------------------------------- --------------- ------------------------- ------------- --------- 
+
+C-Layers (17)
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+c_id   name (*_layer)                                       id   layer_type      macc       rom     tensors                                                        shape (array id)       
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+0      input_Transpose                                      2    Transpose       13824      0       I: input_output                                                f32(1x3x96x96) (33)    
+                                                                                                    O: input_Transpose_output                                      f32(1x96x96x3) (32)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+1      _encoder_encoder_0_Conv_output_0                     1    Conv2D          746508     1344    I: input_Transpose_output                                      f32(1x96x96x3) (32)    
+                                                                                                    S: _encoder_encoder_0_Conv_output_0_scratch0                                          
+                                                                                                    W: _encoder_encoder_0_Conv_output_0_weights                    f32(12x3x3x3) (20)     
+                                                                                                    W: _encoder_encoder_0_Conv_output_0_bias                       f32(12) (17)           
+                                                                                                    O: _encoder_encoder_0_Conv_output_0_output                     f32(1x48x48x12) (18)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+2      _encoder_encoder_1_Relu_output_0                     2    Nonlinearity    27648      0       I: _encoder_encoder_0_Conv_output_0_output                     f32(1x48x48x12) (18)   
+                                                                                                    O: _encoder_encoder_1_Relu_output_0_output                     f32(1x48x48x12) (21)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+3      _encoder_encoder_2_Conv_output_0                     3    Conv2D          1493016    10464   I: _encoder_encoder_1_Relu_output_0_output                     f32(1x48x48x12) (21)   
+                                                                                                    S: _encoder_encoder_2_Conv_output_0_scratch0                                          
+                                                                                                    W: _encoder_encoder_2_Conv_output_0_weights                    f32(24x3x3x12) (25)    
+                                                                                                    W: _encoder_encoder_2_Conv_output_0_bias                       f32(24) (22)           
+                                                                                                    O: _encoder_encoder_2_Conv_output_0_output                     f32(1x24x24x24) (23)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+4      _encoder_encoder_3_Relu_output_0                     4    Nonlinearity    13824      0       I: _encoder_encoder_2_Conv_output_0_output                     f32(1x24x24x24) (23)   
+                                                                                                    O: _encoder_encoder_3_Relu_output_0_output                     f32(1x24x24x24) (26)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+5      _encoder_encoder_4_Conv_output_0                     5    Conv2D          1493040    41664   I: _encoder_encoder_3_Relu_output_0_output                     f32(1x24x24x24) (26)   
+                                                                                                    S: _encoder_encoder_4_Conv_output_0_scratch0                                          
+                                                                                                    W: _encoder_encoder_4_Conv_output_0_weights                    f32(48x3x3x24) (30)    
+                                                                                                    W: _encoder_encoder_4_Conv_output_0_bias                       f32(48) (27)           
+                                                                                                    O: _encoder_encoder_4_Conv_output_0_output                     f32(1x12x12x48) (28)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+6      _encoder_encoder_5_Relu_output_0                     6    Nonlinearity    6912       0       I: _encoder_encoder_4_Conv_output_0_output                     f32(1x12x12x48) (28)   
+                                                                                                    O: _encoder_encoder_5_Relu_output_0_output                     f32(1x12x12x48) (31)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+7      _decoder_decoder_0_ConvTranspose_output_0_upsample   7    Resize          0          0       I: _encoder_encoder_5_Relu_output_0_output                     f32(1x12x12x48) (31)   
+                                                                                                    O: _decoder_decoder_0_ConvTranspose_output_0_upsample_output   f32(1x23x23x48) (3)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+8      _decoder_decoder_0_ConvTranspose_output_0            7    Conv2D          10616856   73824   I: _decoder_decoder_0_ConvTranspose_output_0_upsample_output   f32(1x23x23x48) (3)    
+                                                                                                    S: _decoder_decoder_0_ConvTranspose_output_0_scratch0                                 
+                                                                                                    W: _decoder_decoder_0_ConvTranspose_output_0_weights           f32(24x4x4x48) (4)     
+                                                                                                    W: _decoder_decoder_0_ConvTranspose_output_0_bias              f32(24) (0)            
+                                                                                                    O: _decoder_decoder_0_ConvTranspose_output_0_output            f32(1x24x24x24) (1)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+9      _decoder_decoder_1_Relu_output_0                     8    Nonlinearity    13824      0       I: _decoder_decoder_0_ConvTranspose_output_0_output            f32(1x24x24x24) (1)    
+                                                                                                    O: _decoder_decoder_1_Relu_output_0_output                     f32(1x24x24x24) (5)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+10     _decoder_decoder_2_ConvTranspose_output_0_upsample   9    Resize          0          0       I: _decoder_decoder_1_Relu_output_0_output                     f32(1x24x24x24) (5)    
+                                                                                                    O: _decoder_decoder_2_ConvTranspose_output_0_upsample_output   f32(1x47x47x24) (9)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+11     _decoder_decoder_2_ConvTranspose_output_0            9    Conv2D          10616844   18480   I: _decoder_decoder_2_ConvTranspose_output_0_upsample_output   f32(1x47x47x24) (9)    
+                                                                                                    S: _decoder_decoder_2_ConvTranspose_output_0_scratch0                                 
+                                                                                                    W: _decoder_decoder_2_ConvTranspose_output_0_weights           f32(12x4x4x24) (10)    
+                                                                                                    W: _decoder_decoder_2_ConvTranspose_output_0_bias              f32(12) (6)            
+                                                                                                    O: _decoder_decoder_2_ConvTranspose_output_0_output            f32(1x48x48x12) (7)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+12     _decoder_decoder_3_Relu_output_0                     10   Nonlinearity    27648      0       I: _decoder_decoder_2_ConvTranspose_output_0_output            f32(1x48x48x12) (7)    
+                                                                                                    O: _decoder_decoder_3_Relu_output_0_output                     f32(1x48x48x12) (11)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+13     _decoder_decoder_4_ConvTranspose_output_0_upsample   11   Resize          0          0       I: _decoder_decoder_3_Relu_output_0_output                     f32(1x48x48x12) (11)   
+                                                                                                    O: _decoder_decoder_4_ConvTranspose_output_0_upsample_output   f32(1x95x95x12) (15)   
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+14     _decoder_decoder_4_ConvTranspose_output_0            11   Conv2D          5308419    2316    I: _decoder_decoder_4_ConvTranspose_output_0_upsample_output   f32(1x95x95x12) (15)   
+                                                                                                    S: _decoder_decoder_4_ConvTranspose_output_0_scratch0                                 
+                                                                                                    W: _decoder_decoder_4_ConvTranspose_output_0_weights           f32(3x4x4x12) (16)     
+                                                                                                    W: _decoder_decoder_4_ConvTranspose_output_0_bias              f32(3) (12)            
+                                                                                                    O: _decoder_decoder_4_ConvTranspose_output_0_output            f32(1x96x96x3) (13)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+15     output                                               12   Nonlinearity    276480     0       I: _decoder_decoder_4_ConvTranspose_output_0_output            f32(1x96x96x3) (13)    
+                                                                                                    O: output_output                                               f32(1x96x96x3) (35)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+16     output_Transpose_0                                   1    Transpose       13824      0       I: output_output                                               f32(1x96x96x3) (35)    
+                                                                                                    O: output_Transpose_0_output                                   f32(1x3x96x96) (34)    
+------ ---------------------------------------------------- ---- --------------- ---------- ------- -------------------------------------------------------------- ---------------------- 
+
+
+
+Number of operations per c-layer
+------- ------ ----------------------------------------------- ------------ -------------- 
+c_id    m_id   name (type)                                              #op           type 
+------- ------ ----------------------------------------------- ------------ -------------- 
+0       2      input_Transpose (Transpose)                           13,824   smul_f32_f32 
+1       1      _encoder_encoder_0..v_output_0 (Conv2D)              746,508   smul_f32_f32 
+2       2      _encoder_encoder_1..u_output_0 (Nonlinearity)         27,648     op_f32_f32 
+3       3      _encoder_encoder_2..v_output_0 (Conv2D)            1,493,016   smul_f32_f32 
+4       4      _encoder_encoder_3..u_output_0 (Nonlinearity)         13,824     op_f32_f32 
+5       5      _encoder_encoder_4..v_output_0 (Conv2D)            1,493,040   smul_f32_f32 
+6       6      _encoder_encoder_5..u_output_0 (Nonlinearity)          6,912     op_f32_f32 
+7       7      _decoder_decoder_0..0_upsample (Resize)                    0   smul_f32_f32 
+8       7      _decoder_decoder_0..e_output_0 (Conv2D)           10,616,856   smul_f32_f32 
+9       8      _decoder_decoder_1..u_output_0 (Nonlinearity)         13,824     op_f32_f32 
+10      9      _decoder_decoder_2..0_upsample (Resize)                    0   smul_f32_f32 
+11      9      _decoder_decoder_2..e_output_0 (Conv2D)           10,616,844   smul_f32_f32 
+12      10     _decoder_decoder_3..u_output_0 (Nonlinearity)         27,648     op_f32_f32 
+13      11     _decoder_decoder_4..0_upsample (Resize)                    0   smul_f32_f32 
+14      11     _decoder_decoder_4..e_output_0 (Conv2D)            5,308,419   smul_f32_f32 
+15      12     output (Nonlinearity)                                276,480     op_f32_f32 
+16      1      output_Transpose_0 (Transpose)                        13,824   smul_f32_f32 
+------- ------ ----------------------------------------------- ------------ -------------- 
+total                                                            30,668,667 
+
+Number of operation types
+---------------- ------------ ----------- 
+operation type              #           % 
+---------------- ------------ ----------- 
+smul_f32_f32       30,302,331       98.8% 
+op_f32_f32            366,336        1.2% 
+
+Complexity report (model)
+------ ------------------------------------------ ------------------------- ------------------------- ---------- 
+m_id   name                                       c_macc                    c_rom                     c_id       
+------ ------------------------------------------ ------------------------- ------------------------- ---------- 
+1      _encoder_encoder_0_Conv_output_0           ||                 2.5%   |                  0.9%   [1, 16]    
+2      _encoder_encoder_1_Relu_output_0           |                  0.1%   |                  0.0%   [0, 2]     
+3      _encoder_encoder_2_Conv_output_0           |||                4.9%   |||                7.1%   [3]        
+4      _encoder_encoder_3_Relu_output_0           |                  0.0%   |                  0.0%   [4]        
+5      _encoder_encoder_4_Conv_output_0           |||                4.9%   |||||||||         28.1%   [5]        
+6      _encoder_encoder_5_Relu_output_0           |                  0.0%   |                  0.0%   [6]        
+7      _decoder_decoder_0_ConvTrans..e_output_0   ||||||||||||||||  34.6%   ||||||||||||||||  49.9%   [7, 8]     
+8      _decoder_decoder_1_Relu_output_0           |                  0.0%   |                  0.0%   [9]        
+9      _decoder_decoder_2_ConvTrans..e_output_0   |||||||||||||||   34.6%   ||||              12.5%   [10, 11]   
+10     _decoder_decoder_3_Relu_output_0           |                  0.1%   |                  0.0%   [12]       
+11     _decoder_decoder_4_ConvTrans..e_output_0   ||||||||          17.3%   |                  1.6%   [13, 14]   
+12     output                                     |                  0.9%   |                  0.0%   [15]       
+------ ------------------------------------------ ------------------------- ------------------------- ---------- 
+macc=30,668,667 weights=148,092 act=543,792 ram_io=0
+ 
+ Requested memory size by section - "stm32h7" target
+ ------------------------------ ------- --------- ------- --------- 
+ module                            text    rodata    data       bss 
+ ------------------------------ ------- --------- ------- --------- 
+ NetworkRuntime1020_CM7_GCC.a     8,132         0       0         0 
+ network.o                          944       232   4,964       200 
+ network_data.o                      48        16      88         0 
+ lib (toolchain)*                   324       328       0         0 
+ ------------------------------ ------- --------- ------- --------- 
+ RT total**                       9,448       576   5,052       200 
+ ------------------------------ ------- --------- ------- --------- 
+ weights                              0   148,096       0         0 
+ activations                          0         0       0   543,792 
+ io                                   0         0       0         0 
+ ------------------------------ ------- --------- ------- --------- 
+ TOTAL                            9,448   148,672   5,052   543,992 
+ ------------------------------ ------- --------- ------- --------- 
+ *  toolchain objects (libm/libgcc*)
+ ** RT AI runtime objects (kernels+infrastructure)
+  
+  Summary - "stm32h7" target
+  -------------------------------------------------
+               FLASH (ro)     %*   RAM (rw)      % 
+  -------------------------------------------------
+  RT total         15,076   9.2%      5,252   1.0% 
+  -------------------------------------------------
+  TOTAL           163,172           549,044        
+  -------------------------------------------------
+  *  rt/total
+
+
+Generated files (7)
+---------------------------------------------------------------------- 
+C:\Users\HU JUXIAN\.stm32cubemx\network_output\network_data_params.h   
+C:\Users\HU JUXIAN\.stm32cubemx\network_output\network_data_params.c   
+C:\Users\HU JUXIAN\.stm32cubemx\network_output\network_data.h          
+C:\Users\HU JUXIAN\.stm32cubemx\network_output\network_data.c          
+C:\Users\HU JUXIAN\.stm32cubemx\network_output\network_config.h        
+C:\Users\HU JUXIAN\.stm32cubemx\network_output\network.h               
+C:\Users\HU JUXIAN\.stm32cubemx\network_output\network.c               

@@ -68,8 +68,8 @@ SDRAM (xrw)      : ORIGIN = 0xC0000000, LENGTH = 32M
 _estack = ORIGIN(DTCMRAM) + LENGTH(DTCMRAM);    /* end of RAM */
 _sstack = _estack - _Min_Stack_Size;
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0x200;      /* required amount of heap  */
-_Min_Stack_Size = 0x400; /* required amount of stack */
+_Min_Heap_Size = 0x800;      /* required amount of heap  */
+_Min_Stack_Size = 0x800; /* required amount of stack */
 
 /* Define output sections */
 SECTIONS
@@ -167,15 +167,15 @@ SECTIONS
     *(.RamFunc*)       /* .RamFunc* sections */
 
     . = ALIGN(4);
-  } >DTCMRAM AT> FLASH
+    _edata = .;        /* define a global symbol at data end */
+    PROVIDE(__data_end = .);
+  } >RAM AT> FLASH
 
  /* Initialized TLS data section */
   .tdata : ALIGN(4)
   {
     *(.tdata .tdata.* .gnu.linkonce.td.*)
     . = ALIGN(4);
-    _edata = .;        /* define a global symbol at data end */
-    PROVIDE(__data_end = .);
     PROVIDE(__tdata_end = .);
   } >DTCMRAM AT> FLASH
 
@@ -195,9 +195,6 @@ SECTIONS
   /* Uninitialized data section */
   .tbss (NOLOAD) : ALIGN(4)
   {
-     /* This is used by the startup in order to initialize the .bss secion */
-    _sbss = .;         /* define a global symbol at bss start */
-    __bss_start__ = _sbss;
     *(.tbss .tbss.*)
     . = ALIGN(4);
     PROVIDE( __tbss_end = . );
@@ -217,18 +214,21 @@ SECTIONS
 
   .bss (NOLOAD) : ALIGN(4)
   {
+    /* This is used by the startup in order to initialize the .bss section */
+    _sbss = .;         /* define a global symbol at bss start */
+    __bss_start__ = _sbss;
     *(.bss)
     *(.bss*)
     *(COMMON)
 
-      . = ALIGN(4);
+    . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
-      PROVIDE( __bss_end = .);
-  } >DTCMRAM
+    PROVIDE( __bss_end = .);
+  } >RAM
   PROVIDE( __non_tls_bss_start = ADDR(.bss) );
 
-  PROVIDE( __bss_start = __tbss_start );
+  PROVIDE( __bss_start = _sbss );
   PROVIDE( __bss_size = __bss_end - __bss_start );
 
   /* User_heap_stack section, used to check that there is enough RAM left */
@@ -266,6 +266,24 @@ SECTIONS
     . = ALIGN(32);
     KEEP(*(.sdram_ltdc))
     KEEP(*(.sdram_ltdc*))
+    . = ALIGN(32);
+  } >SDRAM
+
+  .sdram_ai (NOLOAD) :
+  {
+    . = ALIGN(32);
+    KEEP(*(.sdram_ai))
+    KEEP(*(.sdram_ai*))
+    . = ALIGN(32);
+  } >SDRAM
+
+  .ai_activations (NOLOAD) :
+  {
+    . = ALIGN(32);
+    __ai_activations_start = .;
+    KEEP(*(.ai_activations))
+    KEEP(*(.ai_activations*))
+    __ai_activations_end = .;
     . = ALIGN(32);
   } >SDRAM
   /DISCARD/ :
