@@ -16,7 +16,7 @@
 #define LV_USE_STDLIB_STRING LV_STDLIB_BUILTIN
 #define LV_USE_STDLIB_SPRINTF LV_STDLIB_BUILTIN
 #define LV_ATTRIBUTE_LARGE_RAM_ARRAY __attribute__((section(".lvgl_heap")))
-#define LV_MEM_SIZE (96U * 1024U)
+#define LV_MEM_SIZE (320U * 1024U)
 
 #define LV_USE_LOG 0
 #define LV_USE_ASSERT_NULL 1

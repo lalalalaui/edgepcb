@@ -218,19 +218,40 @@ static void lvgl_flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px
 static void lvgl_touch_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 {
     static lv_point_t last_point;
+    static uint8_t last_pressed;
+    static uint32_t last_log_tick;
     uint8_t pressed = 0;
+    uint8_t scan_res;
     (void)indev;
-    tp_dev.scan(0);
-    if (tp_dev.touchtype & 0x80)
-        pressed = (tp_dev.sta & 0x01) ? 1U : 0U;
-    else
+
+    scan_res = tp_dev.scan(0);
+    if (tp_dev.touchtype & 0x80) {
+        pressed = (scan_res || (tp_dev.sta & TP_PRES_DOWN) || (tp_dev.sta & 0x03U)) ? 1U : 0U;
+    } else {
         pressed = (tp_dev.sta & TP_PRES_DOWN) ? 1U : 0U;
+    }
+
     if (pressed && tp_dev.x[0] < lcddev.width && tp_dev.y[0] < lcddev.height) {
         last_point.x = tp_dev.x[0];
         last_point.y = tp_dev.y[0];
     }
+
+    if ((pressed != last_pressed) || (pressed && ((HAL_GetTick() - last_log_tick) > 500U))) {
+        printf("touch pressed=%u scan=%u sta=0x%04x x=%u y=%u w=%u h=%u\r\n",
+               pressed,
+               scan_res,
+               tp_dev.sta,
+               tp_dev.x[0],
+               tp_dev.y[0],
+               lcddev.width,
+               lcddev.height);
+        last_pressed = pressed;
+        last_log_tick = HAL_GetTick();
+    }
+
     data->point = last_point;
     data->state = pressed ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
+    data->continue_reading = false;
 }
 
 /* ========== Display & Touch Init ========== */

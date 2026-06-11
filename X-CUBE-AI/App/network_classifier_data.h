@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    network_data.h
+  * @file    network_classifier_data.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    2026-06-05T10:06:16+0800
+  * @date    2026-06-05T10:06:22+0800
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * Copyright (c) 2026 STMicroelectronics.
@@ -14,68 +14,68 @@
   ******************************************************************************
   */
 
-#ifndef NETWORK_DATA_H
-#define NETWORK_DATA_H
+#ifndef NETWORK_CLASSIFIER_DATA_H
+#define NETWORK_CLASSIFIER_DATA_H
 
-#include "network_config.h"
-#include "network_data_params.h"
-
-AI_DEPRECATED
-#define AI_NETWORK_DATA_ACTIVATIONS(ptr_)  \
-  ai_network_data_activations_buffer_get(AI_HANDLE_PTR(ptr_))
+#include "network_classifier_config.h"
+#include "network_classifier_data_params.h"
 
 AI_DEPRECATED
-#define AI_NETWORK_DATA_WEIGHTS(ptr_)  \
-  ai_network_data_weights_buffer_get(AI_HANDLE_PTR(ptr_))
+#define AI_NETWORK_CLASSIFIER_DATA_ACTIVATIONS(ptr_)  \
+  ai_network_classifier_data_activations_buffer_get(AI_HANDLE_PTR(ptr_))
+
+AI_DEPRECATED
+#define AI_NETWORK_CLASSIFIER_DATA_WEIGHTS(ptr_)  \
+  ai_network_classifier_data_weights_buffer_get(AI_HANDLE_PTR(ptr_))
 
 
 AI_API_DECLARE_BEGIN
 
 
-extern const ai_u64 s_network_weights_array_u64[18512];
+extern const ai_u64 s_network_classifier_weights_array_u64[31299];
 
 
 
 /*!
  * @brief Get network activations buffer initialized struct.
- * @ingroup network_data
+ * @ingroup network_classifier_data
  * @param[in] ptr a pointer to the activations array storage area
  * @return an ai_buffer initialized struct
  */
 AI_DEPRECATED
 AI_API_ENTRY
-ai_buffer ai_network_data_activations_buffer_get(const ai_handle ptr);
+ai_buffer ai_network_classifier_data_activations_buffer_get(const ai_handle ptr);
 
 /*!
  * @brief Get network weights buffer initialized struct.
- * @ingroup network_data
+ * @ingroup network_classifier_data
  * @param[in] ptr a pointer to the weights array storage area
  * @return an ai_buffer initialized struct
  */
 AI_DEPRECATED
 AI_API_ENTRY
-ai_buffer ai_network_data_weights_buffer_get(const ai_handle ptr);
+ai_buffer ai_network_classifier_data_weights_buffer_get(const ai_handle ptr);
 
 /*!
  * @brief Get network weights array pointer as a handle ptr.
- * @ingroup network_data
+ * @ingroup network_classifier_data
  * @return a ai_handle pointer to the weights array
  */
 AI_DEPRECATED
 AI_API_ENTRY
-ai_handle ai_network_data_weights_get(void);
+ai_handle ai_network_classifier_data_weights_get(void);
 
 
 /*!
  * @brief Get network params configuration data structure.
- * @ingroup network_data
+ * @ingroup network_classifier_data
  * @return true if a valid configuration is present, false otherwise
  */
 AI_API_ENTRY
-ai_bool ai_network_data_params_get(ai_network_params* params);
+ai_bool ai_network_classifier_data_params_get(ai_network_params* params);
 
 
 AI_API_DECLARE_END
 
-#endif /* NETWORK_DATA_H */
+#endif /* NETWORK_CLASSIFIER_DATA_H */
 

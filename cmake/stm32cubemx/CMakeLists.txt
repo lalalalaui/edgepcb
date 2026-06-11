@@ -29,9 +29,13 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/app_ai.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/sysmem.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/syscalls.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/app_tiny_classifier.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../X-CUBE-AI/App/network.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../X-CUBE-AI/App/network_data.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../X-CUBE-AI/App/network_data_params.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../X-CUBE-AI/App/network_classifier.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../X-CUBE-AI/App/network_classifier_data.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../X-CUBE-AI/App/network_classifier_data_params.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32h743xx.s
 )
 
